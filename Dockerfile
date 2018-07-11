@@ -18,11 +18,10 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
 
 # Install Ansible inventory file.
 RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
-RUN git clone https://github.com/xrowgmbh/ansible-role-ansible.git /ansible-role-ansible
-ADD test.yml /ansible-role-ansible/test.yml
-ADD requirements.yml /ansible-role-ansible/requirements.yml
-RUN ansible-galaxy install -r  /ansible-role-ansible/requirements.yml -p /ansible-role-ansible/roles/
-RUN ansible-playbook /ansible-role-ansible/test.yml
+ADD test.yml /test.yml
+ADD requirements.yml /requirements.yml
+RUN ansible-galaxy install -r  requirements.yml 
+RUN ansible-playbook test.yml
 
 VOLUME ["/sys/fs/cgroup"]
 CMD ["/usr/sbin/init"]
