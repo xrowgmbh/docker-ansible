@@ -21,7 +21,7 @@ RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
 RUN git clone https://github.com/xrowgmbh/ansible-role-ansible.git /ansible-role-ansible
 ADD test.yml /ansible-role-ansible/test.yml
 ADD requirements.yml /ansible-role-ansible/requirements.yml
-RUN ansible-galaxy install -r -p /ansible-role-ansible/roles/ requirements.yml 
+RUN ansible-galaxy install -r -p /ansible-role-ansible/roles/ ansible-role-ansible/requirements.yml 
 RUN ansible-playbook /ansible-role-ansible/test.yml
 
 VOLUME ["/sys/fs/cgroup"]
