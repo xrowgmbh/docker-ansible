@@ -20,8 +20,7 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
 RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
 ADD test.yml /root/.ansible/test.yml
 ADD requirements.yml /root/.ansible/requirements.yml
-RUN ansible-galaxy install -r /root/.ansible/requirements.yml 
-RUN ansible-playbook /root/.ansible/test.yml
+RUN ansible-galaxy install -r /root/.ansible/requirements.yml
 
 VOLUME ["/sys/fs/cgroup"]
-CMD ["/usr/sbin/init"]
+CMD ["/usr/sbin/init && ansible-playbook /root/.ansible/test.yml"]
