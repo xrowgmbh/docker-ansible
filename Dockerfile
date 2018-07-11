@@ -17,10 +17,10 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
 
 # Install Ansible inventory file.
 RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
-ADD test.yml /test.yml
-ADD requirements.yml /requirements.yml
-RUN ansible-galaxy install -r  requirements.yml 
-RUN ansible-playbook test.yml
+ADD test.yml /root/.ansible/test.yml
+ADD requirements.yml /root/.ansible/requirements.yml
+RUN ansible-galaxy install -r /root/.ansible/requirements.yml 
+RUN ansible-playbook /root/.ansible/test.yml
 
 VOLUME ["/sys/fs/cgroup"]
 CMD ["/usr/sbin/init"]
