@@ -1,0 +1,5 @@
+- src: https://github.com/xrowgmbh/ansible-role-python.git
+  name: python
+
+- src: https://github.com/xrowgmbh/ansible-role-scl.git
+  name: scl
