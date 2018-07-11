@@ -2,4 +2,4 @@
 - hosts: localhost
   become: true
   roles:
-    - ../ansible-role-ansible
+    - /root/.ansible/roles/ansible
