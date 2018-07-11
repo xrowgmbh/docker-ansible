@@ -1,4 +1,4 @@
-FROM centos/systemd:7
+FROM centos/systemd
 LABEL maintainer="Björn Dieding"
 ENV container=docker
 
