@@ -21,7 +21,6 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers
 RUN echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts
 ADD test.yml /root/.ansible/test.yml
 ADD requirements.yml /root/.ansible/requirements.yml
-ADD ansible-role-python /root/.ansible/roles/python
 RUN ansible-galaxy install -r /root/.ansible/requirements.yml
 RUN ansible-playbook /root/.ansible/test.yml
 ENV PATH="/opt/rh/rh-python36/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
