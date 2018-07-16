@@ -25,6 +25,8 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers \
     ansible-galaxy install -r install/requirements.yml \
     ansible-playbook install/test.yml
 
+ADD test.sh
+
 VOLUME ["/sys/fs/cgroup"]
 
 CMD ["/usr/sbin/init"]
