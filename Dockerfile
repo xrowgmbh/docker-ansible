@@ -4,8 +4,6 @@ ENV container=docker
 
 ENV PATH="/opt/rh/rh-python36/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
-WORKDIR /tests
-
 # Install Ansible and other requirements.
 RUN yum makecache fast \
  && yum -y install deltarpm epel-release initscripts \
@@ -20,14 +18,12 @@ RUN yum makecache fast \
 
 # Disable requiretty.
 # Install Ansible inventory file.
-ADD install /install
+ADD install install
 
 RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers &&\
     echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts &&\
-    ansible-galaxy install -r /install/requirements.yml &&\
-    ansible-playbook /install/test.yml
-
-ADD test.sh .
+    ansible-galaxy install -r install/requirements.yml &&\
+    ansible-playbook install/test.yml
 
 VOLUME ["/sys/fs/cgroup"]
 
