@@ -4,6 +4,8 @@ ENV container=docker
 
 ENV PATH="/opt/rh/rh-python36/root/usr/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
 
+WORKDIR /tests
+
 # Install Ansible and other requirements.
 RUN yum makecache fast \
  && yum -y install deltarpm epel-release initscripts \
@@ -25,7 +27,7 @@ RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers \
     ansible-galaxy install -r install/requirements.yml \
     ansible-playbook install/test.yml
 
-ADD test.sh
+ADD /tests/test.sh
 
 VOLUME ["/sys/fs/cgroup"]
 
