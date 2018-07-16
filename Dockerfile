@@ -20,14 +20,14 @@ RUN yum makecache fast \
 
 # Disable requiretty.
 # Install Ansible inventory file.
-ADD install .
+ADD install /install
 
-RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers \
-    echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts \
-    ansible-galaxy install -r install/requirements.yml \
-    ansible-playbook install/test.yml
+RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers &&\
+    echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts &&\
+    ansible-galaxy install -r /install/requirements.yml &&\
+    ansible-playbook /install/test.yml
 
-ADD /tests/test.sh
+ADD test.sh .
 
 VOLUME ["/sys/fs/cgroup"]
 
