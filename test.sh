@@ -66,8 +66,8 @@ if [ "$test_idempotence" = true ]; then
   # Run Ansible playbook again (idempotence test).
   printf ${green}"Running playbook again: idempotence test"${neutral}
   idempotence=$(mktemp)
-  docker exec $container_id ansible-playbook /etc/ansible/roles/role_under_test/tests/$playbook | tee -a $idempotence
-  tail $idempotence \
+  docker exec $container_id ansible-playbook /etc/ansible/roles/role_under_test/tests/$playbook | tee  $idempotence
+  cat $idempotence \
     | grep -q 'changed=0.*failed=0' \
     && (printf ${green}'Idempotence test: pass'${neutral}"\n") \
     || (printf ${red}'Idempotence test: fail'${neutral}"\n" && exit 1)
