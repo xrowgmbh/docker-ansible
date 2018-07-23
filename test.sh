@@ -47,6 +47,8 @@ printf "\n"
 # Install requirements if `requirements.yml` is present.
 if [ -f "$role_dir/tests/requirements.yml" ]; then
   printf ${green}"Requirements file detected; installing dependencies."${neutral}"\n"
+  docker exec --tty $container_id env TERM=xterm ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts
+  docker exec --tty $container_id env TERM=xterm ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts
   docker exec --tty $container_id env TERM=xterm ansible-galaxy install -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 fi
 

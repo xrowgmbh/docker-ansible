@@ -19,7 +19,6 @@ RUN yum makecache fast \
 # Disable requiretty.
 # Install Ansible inventory file.
 ADD install install
-ADD .ansible.cfg /root
 
 RUN sed -i -e 's/^\(Defaults\s*requiretty\)/#--- \1/'  /etc/sudoers &&\
     echo -e '[local]\nlocalhost ansible_connection=local' > /etc/ansible/hosts &&\
