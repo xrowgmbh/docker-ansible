@@ -27,7 +27,6 @@ timestamp=$(date +%s)
 
 # Allow environment variables to override defaults.
 playbook=${playbook:-"test.yml"}
-role_dir=${role_dir:-"$PWD"}
 cleanup=${cleanup:-"true"}
 container_id=${container_id:-$timestamp}
 test_idempotence=${test_idempotence:-"true"}
@@ -40,15 +39,21 @@ test_idempotence=${test_idempotence:-"true"}
 # Run the container using the supplied OS.
 printf ${green}"Starting Docker container: xrowgmbh/docker-ansible."${neutral}"\n"
 docker pull xrowgmbh/docker-ansible:latest
-docker run --detach --volume="$role_dir":/etc/ansible/roles/role_under_test:rw --name $container_id $opts xrowgmbh/docker-ansible:latest $init
-
+docker build -t $container_id - << EOF 
+FROM xrowgmbh/docker-ansible:latest
+RUN mkdir -p ${HOME}/.ssh &&\
+    ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts &&\
+    ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\
+    git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test
+EOF
+image_id=$(docker images -q $container_id)
+docker run --detach --name $container_id $opts $image_id $init
 printf "\n"
 
 # Install requirements if `requirements.yml` is present.
-if [ -f "$role_dir/tests/requirements.yml" ]; then
+if [ -f "${CI_PROJECT_DIR}/tests/requirements.yml" ]; then
   printf ${green}"Requirements file detected; installing dependencies."${neutral}"\n"
-  docker exec --tty $container_id env TERM=xterm ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts
-  docker exec --tty $container_id env TERM=xterm ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts
+  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
   docker exec --tty $container_id env TERM=xterm ansible-galaxy install -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 fi
 
