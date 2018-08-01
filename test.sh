@@ -44,7 +44,7 @@ FROM xrowgmbh/docker-ansible:latest
 RUN mkdir -p ${HOME}/.ssh &&\
     ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts &&\
     ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\
-    git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test
+    git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test -b ${CI_COMMIT_REF_NAME}
 EOF
 image_id=$(docker images -q $container_id)
 docker run --detach --name $container_id $opts $image_id $init
