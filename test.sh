@@ -41,9 +41,10 @@ printf ${green}"Starting Docker container: xrowgmbh/docker-ansible."${neutral}"\
 docker pull xrowgmbh/docker-ansible:latest
 docker build -t $container_id - << EOF 
 FROM xrowgmbh/docker-ansible:latest
+ENV CI_JOB_TOKEN=${CI_JOB_TOKEN}
 RUN mkdir -p ${HOME}/.ssh &&\
     ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts &&\
-    ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\
+    ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\   
     git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test -b ${CI_COMMIT_REF_NAME}
 EOF
 image_id=$(docker images -q $container_id)
