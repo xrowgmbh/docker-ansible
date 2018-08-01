@@ -54,7 +54,7 @@ printf "\n"
 # Install requirements if `requirements.yml` is present.
 if [ -f "${CI_PROJECT_DIR}/tests/requirements.yml" ]; then
   printf ${green}"Requirements file detected; installing dependencies."${neutral}"\n"
-  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
+  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
   docker exec --tty $container_id env TERM=xterm ansible-galaxy install -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 fi
 
