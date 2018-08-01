@@ -47,7 +47,7 @@ RUN mkdir -p ${HOME}/.ssh &&\
     git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test -b ${CI_COMMIT_REF_NAME}
 EOF
 image_id=$(docker images -q $container_id)
-docker run -e "CI_JOB_TOKEN=${CI_JOB_TOKEN}" --detach --name $container_id $opts $image_id $init
+docker run -e "CI_JOB_TOKEN=$CI_JOB_TOKEN" --detach --name $container_id $opts $image_id $init
 printf "\n"
 
 # Install requirements if `requirements.yml` is present.
