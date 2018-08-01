@@ -30,6 +30,7 @@ playbook=${playbook:-"test.yml"}
 cleanup=${cleanup:-"true"}
 container_id=${container_id:-$timestamp}
 test_idempotence=${test_idempotence:-"true"}
+Token=${CI_JOB_TOKEN}
 
 ## Set up vars for Docker setup.
 # CentOS 7
@@ -44,7 +45,7 @@ FROM xrowgmbh/docker-ansible:latest
 RUN mkdir -p ${HOME}/.ssh &&\
     ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts &&\
     ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\
-    git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test -b ${CI_COMMIT_REF_NAME}
+    git clone https://gitlab-ci-token:$Token@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test -b ${CI_COMMIT_REF_NAME}
 EOF
 image_id=$(docker images -q $container_id)
 docker run --detach --name $container_id $opts $image_id $init
@@ -53,7 +54,7 @@ printf "\n"
 # Install requirements if `requirements.yml` is present.
 if [ -f "${CI_PROJECT_DIR}/tests/requirements.yml" ]; then
   printf ${green}"Requirements file detected; installing dependencies."${neutral}"\n"
-  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
+  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:$Token@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
   docker exec --tty $container_id env TERM=xterm ansible-galaxy install -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 fi
 
