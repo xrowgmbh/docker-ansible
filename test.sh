@@ -41,7 +41,6 @@ printf ${green}"Starting Docker container: xrowgmbh/docker-ansible."${neutral}"\
 docker pull xrowgmbh/docker-ansible:latest
 docker build -t $container_id - << EOF 
 FROM xrowgmbh/docker-ansible:latest
-ENV CI_JOB_TOKEN ${CI_JOB_TOKEN}
 RUN mkdir -p ${HOME}/.ssh &&\
     ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts &&\
     ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\   
@@ -54,7 +53,7 @@ printf "\n"
 # Install requirements if `requirements.yml` is present.
 if [ -f "${CI_PROJECT_DIR}/tests/requirements.yml" ]; then
   printf ${green}"Requirements file detected; installing dependencies."${neutral}"\n"
-  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
+  docker exec -e CI_JOB_TOKEN=${CI_JOB_TOKEN} --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
   docker exec --tty $container_id env TERM=xterm ansible-galaxy install -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 fi
 
