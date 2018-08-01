@@ -47,13 +47,13 @@ RUN mkdir -p ${HOME}/.ssh &&\
     git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com${CI_PROJECT_DIR}.git /etc/ansible/roles/role_under_test -b ${CI_COMMIT_REF_NAME}
 EOF
 image_id=$(docker images -q $container_id)
-docker run --detach --name $container_id $opts $image_id $init
+docker run -e "CI_JOB_TOKEN=${CI_JOB_TOKEN}" --detach --name $container_id $opts $image_id $init
 printf "\n"
 
 # Install requirements if `requirements.yml` is present.
 if [ -f "${CI_PROJECT_DIR}/tests/requirements.yml" ]; then
   printf ${green}"Requirements file detected; installing dependencies."${neutral}"\n"
-  docker exec -e CI_JOB_TOKEN=${CI_JOB_TOKEN} --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
+  docker exec --tty $container_id env TERM=xterm sed -i s/'\(git@gitlab.com:\)\(\S\+\)'/'https:\/\/gitlab-ci-token:$CI_JOB_TOKEN@gitlab.com\/\2'/g /etc/ansible/roles/role_under_test/tests/requirements.yml
   docker exec --tty $container_id env TERM=xterm ansible-galaxy install -r /etc/ansible/roles/role_under_test/tests/requirements.yml
 fi
 
