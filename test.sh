@@ -37,10 +37,10 @@ test_idempotence=${test_idempotence:-"true"}
   opts="--privileged --volume=/sys/fs/cgroup:/sys/fs/cgroup:ro"
 
 # Run the container using the supplied OS.
-printf ${green}"Starting Docker container: xrowgmbh/docker-ansible."${neutral}"\n"
-docker pull xrowgmbh/docker-ansible:latest
+printf ${green}"Starting Docker container: xrowgmbh/ansible."${neutral}"\n"
+docker pull xrowgmbh/ansible:latest
 docker build -t $container_id - << EOF 
-FROM xrowgmbh/docker-ansible:latest
+FROM xrowgmbh/ansible:latest
 RUN mkdir -p ${HOME}/.ssh &&\
     ssh-keyscan -t rsa gitlab.com >> ${HOME}/.ssh/known_hosts &&\
     ssh-keyscan -t rsa github.com >> ${HOME}/.ssh/known_hosts &&\   
